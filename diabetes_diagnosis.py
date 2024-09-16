@@ -22,27 +22,36 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 # 4. Train the SVM Model
-svm_model = SVC(kernel='rbf', C=10, gamma=0.1, random_state=42)
+svm_model = SVC(kernel='rbf', C=0.2, gamma='scale', random_state=42)
 svm_model.fit(X_train, y_train)
+
 
 # 5. Train the Random Forest Model
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train, y_train)
 
 # 6. Train the Gradient Boosting Model
-gb_model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, random_state=42)
+gb_model = GradientBoostingClassifier(n_estimators=140, learning_rate=0.11 , max_depth=4, min_samples_split=4, min_samples_leaf=4, random_state=42)
 gb_model.fit(X_train, y_train)
 
-# 7. Train the KNN Model
-knn_model = KNeighborsClassifier(n_neighbors=5)
+# 7. Manually Tuning the KNN Model
+knn_model = KNeighborsClassifier(n_neighbors=7, weights='distance', metric='minkowski', p=2 )
+# Increased n_neighbors to 7, using distance-based weighting and Minkowski distance (same as Euclidean)
 knn_model.fit(X_train, y_train)
+y_pred_knn = knn_model.predict(X_test)
+accuracy_knn = accuracy_score(y_test, y_pred_knn)
+print(f"KNN Accuracy: {accuracy_knn}")
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred_knn))
+print("Classification Report:")
+print(classification_report(y_test, y_pred_knn))
+
 
 # 8. Evaluate the SVM Model
-print("\nEvaluating the SVM Model:")
-y_pred_svm = svm_model.predict(X_test)
-accuracy_svm = accuracy_score(y_test, y_pred_svm)
-cm_svm = confusion_matrix(y_test, y_pred_svm)
-report_svm = classification_report(y_test, y_pred_svm)
+y_pred = svm_model.predict(X_test)
+accuracy_svm = accuracy_score(y_test, y_pred)
+cm_svm = confusion_matrix(y_test, y_pred)
+report_svm = classification_report(y_test, y_pred)
 
 print("SVM Model Results:")
 print(f"Accuracy: {accuracy_svm}")
